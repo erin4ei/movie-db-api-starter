@@ -64,23 +64,56 @@ function getBirthYearMovies(e){
     e.preventDefault();
 
     // Get the user's input/year value
-    // TO DO
+    let year = encodeURI(document.getElementById("userYear").value);
     // the place on the page where we'll add the movies
     let birthYearMovies = document.getElementById("birthYear");
 
-    if(year < 1940 || year > 2024 || year == ""){
-        birthYearMovies.innerHTML = `<p style="color: red; background-color: white;">Please enter a year between 1940 and 2022</p>`;
+    if(year < 1940 || year > 2026 || year == ""){
+        birthYearMovies.innerHTML = `<p style="color: red; background-color: white;">Please enter a year between 1940 and 2026</p>`;
     }else{
         // TO DO - Build the endpoint we need (this one has additional parameters)
-        // TO DO
+        let begUrl = "https://api.themoviedb.org/3/discover/movie?api_key=a3fc36d243895e239a1bc87315da1fe6&primary_release_year=";
+        let endUrl = "&sort_by=revenue.desc&language=en-US&include_adult=false";
         let imgUrl = "https://image.tmdb.org/t/p/w400";
 
         // ajax time!
         // create the object
-        // TO DO
+        let xhr = new XMLHttpRequest();
 
         // attach event handlers
-        // TO DO
+        xhr.addEventListener("readystatechange", function(){
+            if (this.readyState === this.DONE){
+                // log to console to see our data
+                console.log(this.response);
+
+                let json = this.response;
+
+                // string to build output
+                let html = "";
+
+                for(let i = 0; i < 12; i++){
+                    if(json.results[i].poster_path === null){
+                        continue;
+                    }
+                    else {
+                        html += `<section class="yrMovie">
+                        <img src="${imgUrl}${json.results[i].poster_path}" alt="">
+                        <h3>${json.results[i].title}</h3>
+                        </section>`; 
+                    }
+                }
+                birthYearMovies.innerHTML = html;
+            }
+        });
+
+        // set the response type
+        xhr.responseType = "json";
+        // open the request
+        xhr.open("GET", `${begUrl}${year}${endUrl}`);
+        // attach the headers (optional)
+
+        // send the request
+        xhr.send();
 
         /*
             // This code can be used for the display of the movies from the given year
@@ -100,14 +133,7 @@ function getBirthYearMovies(e){
             }
         */
         
-        // set the response type
-        // TO DO
-        // open the request
-        // TO DO
-        // attach the headers (optional)
 
-        // send the request
-        // TO DO
     }
 }
 
